@@ -2,6 +2,7 @@ package com.alvaropena.calculadorasalarioneto
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.alvaropena.calculadorasalarioneto.ui.theme.CalculadoraSalarioNetoTheme
+import androidx.compose.material3.Button
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +57,36 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     val disabilityPercentage = remember { mutableStateOf("") }
     val maritalStatuses = listOf("Soltero/a", "Casado/a", "Divorciado/a", "Viudo/a")
     val selectedMaritalStatus = remember { mutableStateOf("") }
+    val grossSalaryAmount = grossSalary.value
+        .trim()
+        .replace(',', '.')
+        .toBigDecimalOrNull()
+    val isGrossSalaryValid = grossSalaryAmount != null && grossSalaryAmount.signum() > 0
+    val paymentCount = numberOfPayments.value.trim().toIntOrNull()
+    val isPaymentCountValid = paymentCount != null && paymentCount > 0
+    val ageYears = age.value.trim().toIntOrNull()
+    val isAgeValid = ageYears != null && ageYears > 0
+    val childCount = numberOfChildren.value.trim().toIntOrNull()
+    val isChildCountValid = childCount != null && childCount >= 0
+    val disabilityValue = disabilityPercentage.value.trim().toIntOrNull()
+    val isDisabilityValid = disabilityValue != null && disabilityValue in 0..100
+    val canCalculate = isGrossSalaryValid &&
+            isPaymentCountValid &&
+            isAgeValid &&
+            isChildCountValid &&
+            isDisabilityValid &&
+            selectedProfessionalGroup.value in professionalGroups &&
+            selectedMaritalStatus.value in maritalStatuses
+    val salaryResult = remember { mutableStateOf<SalaryResult?>(null) }
+    val result = salaryResult.value
+    if (result != null) {
+        SalaryResultsScreen(
+            result = result,
+            onBack = { salaryResult.value = null },
+            modifier = modifier
+        )
+        return
+    }
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
         Text(text = name)
         Text(text = "Salario bruto anual")
@@ -63,7 +95,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             onValueChange = { newText ->
                 grossSalary.value = newText
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            isError = grossSalary.value.isNotBlank() && !isGrossSalaryValid
         )
         Text(text = "Número de pagas")
         OutlinedTextField(
@@ -71,7 +104,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             onValueChange = { newText ->
             numberOfPayments.value = newText
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            isError = numberOfPayments.value.isNotBlank() && !isPaymentCountValid
         )
         Text(text = "Edad")
         OutlinedTextField(
@@ -79,7 +113,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             onValueChange = { newText ->
                 age.value = newText
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            isError = age.value.isNotBlank() && !isAgeValid
         )
         Text(text = "Número de hijos")
         OutlinedTextField(
@@ -87,7 +122,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             onValueChange = { newText ->
                 numberOfChildren.value = newText
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            isError = numberOfChildren.value.isNotBlank() && !isChildCountValid
         )
         Text(text = "Grupo profesional")
         SingleChoiceOptions(
@@ -103,7 +139,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             onValueChange = { newText ->
                 disabilityPercentage.value = newText
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            isError = disabilityPercentage.value.isNotBlank() && !isDisabilityValid
         )
         Text(text = "Estado civil")
         SingleChoiceOptions(
@@ -113,6 +150,19 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
                 selectedMaritalStatus.value = option
             }
         )
+        Button(
+            onClick = {
+                if (grossSalaryAmount != null) {
+                    salaryResult.value = calculateSalary(
+                        grossSalary = grossSalaryAmount,
+                        professionalGroup = selectedProfessionalGroup.value
+                    )
+                }
+            },
+            enabled = canCalculate
+        ) {
+            Text(text = "Calcular")
+        }
     }
 }
 
@@ -137,6 +187,27 @@ private fun SingleChoiceOptions(
                 RadioButton(selected = isSelected, onClick = null)
                 Text(text = option)
             }
+        }
+    }
+}
+
+@Composable
+private fun SalaryResultsScreen(
+    result: SalaryResult,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    BackHandler(onBack = onBack)
+
+    Column(modifier = modifier) {
+        Text(text = "Resultados del cálculo")
+        Text(text = "Salario bruto anual: ${result.grossSalary.toPlainString()} €")
+        Text(text = "Retención de IRPF: ${result.incomeTax.toPlainString()} €")
+        Text(text = "Otras deducciones: ${result.otherDeductions.toPlainString()} €")
+        Text(text = "Salario neto anual: ${result.netSalary.toPlainString()} €")
+
+        Button(onClick = onBack) {
+            Text(text = "Volver")
         }
     }
 }
