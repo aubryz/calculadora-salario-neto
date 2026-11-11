@@ -54,6 +54,8 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.drawWithCache
@@ -139,6 +141,12 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         )
         return
     }
+    val fieldBackground = MaterialTheme.colorScheme.surfaceContainerLowest
+    val fieldColors = OutlinedTextFieldDefaults.colors(
+        focusedContainerColor = fieldBackground,
+        unfocusedContainerColor = fieldBackground,
+        errorContainerColor = fieldBackground
+    )
 
     Column(
         modifier = modifier
@@ -148,7 +156,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.large,
-            color = MaterialTheme.colorScheme.surface,
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            contentColor = Color(0xFFF0F7F3),
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
         ) {
             Column {
@@ -211,7 +220,9 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
                             grossSalary.value = newText
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        isError = grossSalary.value.isNotBlank() && !isGrossSalaryValid
+                        isError = grossSalary.value.isNotBlank() && !isGrossSalaryValid,
+                        colors = fieldColors,
+                        shape = MaterialTheme.shapes.small,
                     )
 
                     Text(text = "Número de pagas")
@@ -222,7 +233,9 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
                             numberOfPayments.value = newText
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        isError = numberOfPayments.value.isNotBlank() && !isPaymentCountValid
+                        isError = numberOfPayments.value.isNotBlank() && !isPaymentCountValid,
+                        colors = fieldColors,
+                        shape = MaterialTheme.shapes.small,
                     )
 
                     Text(text = "Edad")
@@ -233,7 +246,9 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
                             age.value = newText
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        isError = age.value.isNotBlank() && !isAgeValid
+                        isError = age.value.isNotBlank() && !isAgeValid,
+                        colors = fieldColors,
+                        shape = MaterialTheme.shapes.small,
                     )
 
                     Text(text = "Número de hijos")
@@ -244,16 +259,17 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
                             numberOfChildren.value = newText
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        isError = numberOfChildren.value.isNotBlank() && !isChildCountValid
+                        isError = numberOfChildren.value.isNotBlank() && !isChildCountValid,
+                        colors = fieldColors,
+                        shape = MaterialTheme.shapes.small
                     )
 
+                    Text(text = "Grupo profesional")
                     SingleChoiceDropdown(
-                        label = "Grupo profesional",
                         options = professionalGroups,
                         selectedOption = selectedProfessionalGroup.value,
-                        onOptionSelected = { option ->
-                            selectedProfessionalGroup.value = option
-                        }
+                        colors = fieldColors,
+                        onOptionSelected = { selectedProfessionalGroup.value = it }
                     )
 
                     Text(text = "Grado de discapacidad (%)")
@@ -264,26 +280,30 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
                             disabilityPercentage.value = newText
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        isError = disabilityPercentage.value.isNotBlank() && !isDisabilityValid
+                        isError = disabilityPercentage.value.isNotBlank() && !isDisabilityValid,
+                        colors = fieldColors,
+                        shape = MaterialTheme.shapes.small
                     )
 
+                    Text(text = "Estado civil")
                     SingleChoiceDropdown(
-                        label = "Estado civil",
-                        options = maritalStatuses,
-                        selectedOption = selectedMaritalStatus.value,
-                        onOptionSelected = { option ->
-                            selectedMaritalStatus.value = option
-                        }
+                        options = professionalGroups,
+                        selectedOption = selectedProfessionalGroup.value,
+                        colors = fieldColors,
+                        onOptionSelected = { selectedProfessionalGroup.value = it }
                     )
 
                     Button(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .padding(top = 4.dp)
                             .heightIn(min = 48.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF0D665B),
-                            contentColor = Color.White
+                            containerColor = Color(0xFFF3BD72),
+                            contentColor = Color(0xFF073B35),
+                            disabledContainerColor = Color(0xFF084C44),
+                            disabledContentColor = Color(0xFFB8D4CB)
                         ),
                         onClick = {
                             if (grossSalaryAmount != null) {
@@ -308,8 +328,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_arrow_forward),
                                 contentDescription = null,
-                                modifier = Modifier.size(28.dp),
-                                tint = if (canCalculate) Color(0xFFF3BD72) else LocalContentColor.current
+                                modifier = Modifier.size(28.dp)
                             )
                         }
                     }
@@ -347,7 +366,7 @@ private fun SingleChoiceOptions(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SingleChoiceDropdown(
-    label: String,
+    colors: TextFieldColors,
     options: List<String>,
     selectedOption: String,
     onOptionSelected: (String) -> Unit
@@ -360,9 +379,11 @@ private fun SingleChoiceDropdown(
     ) {
         OutlinedTextField(
             value = selectedOption,
+            placeholder = { Text("Elige una opción") },
+            colors = colors,
+            shape = MaterialTheme.shapes.small,
             onValueChange = {},
             readOnly = true,
-            label = { Text(text = label) },
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value)
             },
@@ -542,7 +563,7 @@ private fun CalculatorDisplay(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    CalculadoraSalarioNetoTheme {
+    CalculadoraSalarioNetoTheme(darkTheme = false, dynamicColor = false) {
         Greeting("Calculadora de salario neto")
     }
 }
