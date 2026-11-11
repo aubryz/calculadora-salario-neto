@@ -96,19 +96,25 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     val disabilityPercentage = remember { mutableStateOf("") }
     val maritalStatuses = listOf("Soltero/a", "Casado/a", "Divorciado/a", "Viudo/a")
     val selectedMaritalStatus = remember { mutableStateOf("") }
+
     val grossSalaryAmount = grossSalary.value
         .trim()
         .replace(',', '.')
         .toBigDecimalOrNull()
     val isGrossSalaryValid = grossSalaryAmount != null && grossSalaryAmount.signum() > 0
+
     val paymentCount = numberOfPayments.value.trim().toIntOrNull()
     val isPaymentCountValid = paymentCount != null && paymentCount > 0
+
     val ageYears = age.value.trim().toIntOrNull()
     val isAgeValid = ageYears != null && ageYears > 0
+
     val childCount = numberOfChildren.value.trim().toIntOrNull()
     val isChildCountValid = childCount != null && childCount >= 0
+
     val disabilityValue = disabilityPercentage.value.trim().toIntOrNull()
     val isDisabilityValid = disabilityValue != null && disabilityValue in 0..100
+
     val canCalculate = isGrossSalaryValid &&
             isPaymentCountValid &&
             isAgeValid &&
@@ -116,8 +122,10 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             isDisabilityValid &&
             selectedProfessionalGroup.value in professionalGroups &&
             selectedMaritalStatus.value in maritalStatuses
+
     val salaryResult = remember { mutableStateOf<SalaryResult?>(null) }
     val result = salaryResult.value
+
     if (result != null) {
         SalaryResultsScreen(
             result = result,
@@ -126,133 +134,158 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         )
         return
     }
+
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
-            .padding(screenPadding),
-        verticalArrangement = Arrangement.spacedBy(elementSpacing)
+            .padding(screenPadding)
     ) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.large.copy(
-                bottomStart = CornerSize(0.dp),
-                bottomEnd = CornerSize(0.dp)
-            ),
-            color = Color.Transparent,
-            contentColor = Color.White
+            shape = MaterialTheme.shapes.large,
+            color = MaterialTheme.colorScheme.surface,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
         ) {
-            Column(
-                modifier = Modifier
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(Color(0xFF073B35), Color(0xFF0D665B))
-                        )
-                    )
-                    .padding(start = 12.dp, top = 12.dp, end = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(elementSpacing)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+            Column {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.large.copy(
+                        bottomStart = CornerSize(0.dp),
+                        bottomEnd = CornerSize(0.dp)
+                    ),
+                    color = Color.Transparent,
+                    contentColor = Color.White
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.ic),
-                        contentDescription = null,
-                        modifier = Modifier.size(42.dp)
+                    Column(
+                        modifier = Modifier
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(Color(0xFF073B35), Color(0xFF0D665B))
+                                )
+                            )
+                            .padding(start = 12.dp, top = 12.dp, end = 12.dp),
+                        verticalArrangement = Arrangement.spacedBy(elementSpacing)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.ic),
+                                contentDescription = null,
+                                modifier = Modifier.size(42.dp)
+                            )
+
+                            Text(
+                                text = name,
+                                style = MaterialTheme.typography.headlineSmall.copy(
+                                    lineBreak = LineBreak.Heading
+                                ),
+                                fontFamily = CalculatorFont,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+
+                        CalculatorDisplay(
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(elementSpacing)
+                ) {
+                    Text(text = "Salario bruto anual")
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = grossSalary.value,
+                        onValueChange = { newText ->
+                            grossSalary.value = newText
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        isError = grossSalary.value.isNotBlank() && !isGrossSalaryValid
                     )
 
-                    Text(
-                        text = name,
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            lineBreak = LineBreak.Heading
-                        ),
-                        fontFamily = CalculatorFont,
-                        fontWeight = FontWeight.Medium
+                    Text(text = "Número de pagas")
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = numberOfPayments.value,
+                        onValueChange = { newText ->
+                            numberOfPayments.value = newText
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        isError = numberOfPayments.value.isNotBlank() && !isPaymentCountValid
                     )
-                }
-                CalculatorDisplay(
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-            }
-        }
-        Text(text = "Salario bruto anual")
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = grossSalary.value,
-            onValueChange = { newText ->
-                grossSalary.value = newText
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            isError = grossSalary.value.isNotBlank() && !isGrossSalaryValid
-        )
-        Text(text = "Número de pagas")
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = numberOfPayments.value,
-            onValueChange = { newText ->
-            numberOfPayments.value = newText
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            isError = numberOfPayments.value.isNotBlank() && !isPaymentCountValid
-        )
-        Text(text = "Edad")
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = age.value,
-            onValueChange = { newText ->
-                age.value = newText
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            isError = age.value.isNotBlank() && !isAgeValid
-        )
-        Text(text = "Número de hijos")
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = numberOfChildren.value,
-            onValueChange = { newText ->
-                numberOfChildren.value = newText
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            isError = numberOfChildren.value.isNotBlank() && !isChildCountValid
-        )
-        SingleChoiceDropdown(
-            label = "Grupo profesional",
-            options = professionalGroups,
-            selectedOption = selectedProfessionalGroup.value,
-            onOptionSelected = { option ->
-                selectedProfessionalGroup.value = option
-            }
-        )
-        Text(text = "Grado de discapacidad (%)")
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = disabilityPercentage.value,
-            onValueChange = { newText ->
-                disabilityPercentage.value = newText
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            isError = disabilityPercentage.value.isNotBlank() && !isDisabilityValid
-        )
-        SingleChoiceDropdown(
-            label = "Estado civil",
-            options = maritalStatuses,
-            selectedOption = selectedMaritalStatus.value,
-            onOptionSelected = { option ->
-                selectedMaritalStatus.value = option
-            }
-        )
-        Button(
-            onClick = {
-                if (grossSalaryAmount != null) {
-                    salaryResult.value = calculateSalary(
-                        grossSalary = grossSalaryAmount,
-                        professionalGroup = selectedProfessionalGroup.value
+
+                    Text(text = "Edad")
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = age.value,
+                        onValueChange = { newText ->
+                            age.value = newText
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        isError = age.value.isNotBlank() && !isAgeValid
                     )
+
+                    Text(text = "Número de hijos")
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = numberOfChildren.value,
+                        onValueChange = { newText ->
+                            numberOfChildren.value = newText
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        isError = numberOfChildren.value.isNotBlank() && !isChildCountValid
+                    )
+
+                    SingleChoiceDropdown(
+                        label = "Grupo profesional",
+                        options = professionalGroups,
+                        selectedOption = selectedProfessionalGroup.value,
+                        onOptionSelected = { option ->
+                            selectedProfessionalGroup.value = option
+                        }
+                    )
+
+                    Text(text = "Grado de discapacidad (%)")
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = disabilityPercentage.value,
+                        onValueChange = { newText ->
+                            disabilityPercentage.value = newText
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        isError = disabilityPercentage.value.isNotBlank() && !isDisabilityValid
+                    )
+
+                    SingleChoiceDropdown(
+                        label = "Estado civil",
+                        options = maritalStatuses,
+                        selectedOption = selectedMaritalStatus.value,
+                        onOptionSelected = { option ->
+                            selectedMaritalStatus.value = option
+                        }
+                    )
+
+                    Button(
+                        onClick = {
+                            if (grossSalaryAmount != null) {
+                                salaryResult.value = calculateSalary(
+                                    grossSalary = grossSalaryAmount,
+                                    professionalGroup = selectedProfessionalGroup.value
+                                )
+                            }
+                        },
+                        enabled = canCalculate
+                    ) {
+                        Text(text = "Calcular")
+                    }
                 }
-            },
-            enabled = canCalculate
-        ) {
-            Text(text = "Calcular")
+            }
         }
     }
 }
