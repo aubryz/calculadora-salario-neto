@@ -30,6 +30,8 @@ import com.alvaropena.calculadorasalarioneto.ui.theme.CalculadoraSalarioNetoThem
 import androidx.compose.material3.Button
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.dp
 
@@ -227,10 +229,24 @@ private fun SalaryResultsScreen(
             text = "Resultados del cálculo",
             style = MaterialTheme.typography.headlineSmall
         )
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(text = "Salario neto anual")
+                Text(
+                    text = "${result.netSalary.toPlainString()} €",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            }
+        }
         Text(text = "Salario bruto anual: ${result.grossSalary.toPlainString()} €")
         Text(text = "Retención de IRPF: ${result.incomeTax.toPlainString()} €")
         Text(text = "Otras deducciones: ${result.otherDeductions.toPlainString()} €")
-        Text(text = "Salario neto anual: ${result.netSalary.toPlainString()} €")
 
         Button(onClick = onBack) {
             Text(text = "Volver")
