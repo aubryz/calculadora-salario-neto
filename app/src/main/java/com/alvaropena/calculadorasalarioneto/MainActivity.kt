@@ -28,6 +28,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.alvaropena.calculadorasalarioneto.ui.theme.CalculadoraSalarioNetoTheme
 import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.unit.dp
+
+private val screenPadding = 16.dp
+private val elementSpacing = 8.dp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,10 +94,19 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         )
         return
     }
-    Column(modifier = modifier.verticalScroll(rememberScrollState())) {
-        Text(text = name)
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .padding(screenPadding),
+        verticalArrangement = Arrangement.spacedBy(elementSpacing)
+    ) {
+        Text(
+            text = name,
+            style = MaterialTheme.typography.headlineSmall
+        )
         Text(text = "Salario bruto anual")
         OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = grossSalary.value,
             onValueChange = { newText ->
                 grossSalary.value = newText
@@ -100,6 +116,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         )
         Text(text = "Número de pagas")
         OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = numberOfPayments.value,
             onValueChange = { newText ->
             numberOfPayments.value = newText
@@ -109,6 +126,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         )
         Text(text = "Edad")
         OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = age.value,
             onValueChange = { newText ->
                 age.value = newText
@@ -118,6 +136,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         )
         Text(text = "Número de hijos")
         OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = numberOfChildren.value,
             onValueChange = { newText ->
                 numberOfChildren.value = newText
@@ -135,6 +154,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         )
         Text(text = "Grado de discapacidad (%)")
         OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
             value = disabilityPercentage.value,
             onValueChange = { newText ->
                 disabilityPercentage.value = newText
@@ -199,8 +219,14 @@ private fun SalaryResultsScreen(
 ) {
     BackHandler(onBack = onBack)
 
-    Column(modifier = modifier) {
-        Text(text = "Resultados del cálculo")
+    Column(
+        modifier = modifier.padding(screenPadding),
+        verticalArrangement = Arrangement.spacedBy(elementSpacing)
+    ) {
+        Text(
+            text = "Resultados del cálculo",
+            style = MaterialTheme.typography.headlineSmall
+        )
         Text(text = "Salario bruto anual: ${result.grossSalary.toPlainString()} €")
         Text(text = "Retención de IRPF: ${result.incomeTax.toPlainString()} €")
         Text(text = "Otras deducciones: ${result.otherDeductions.toPlainString()} €")
