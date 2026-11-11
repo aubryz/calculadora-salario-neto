@@ -161,50 +161,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
         ) {
             Column {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.large.copy(
-                        bottomStart = CornerSize(0.dp),
-                        bottomEnd = CornerSize(0.dp)
-                    ),
-                    color = Color.Transparent,
-                    contentColor = Color.White
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .background(
-                                brush = Brush.verticalGradient(
-                                    colors = listOf(Color(0xFF073B35), Color(0xFF0D665B))
-                                )
-                            )
-                            .padding(start = 12.dp, top = 12.dp, end = 12.dp),
-                        verticalArrangement = Arrangement.spacedBy(elementSpacing)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.ic),
-                                contentDescription = null,
-                                modifier = Modifier.size(42.dp)
-                            )
-
-                            Text(
-                                text = name,
-                                style = MaterialTheme.typography.headlineSmall.copy(
-                                    lineBreak = LineBreak.Heading
-                                ),
-                                fontFamily = CalculatorFont,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
-
-                        CalculatorDisplay(
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        )
-                    }
-                }
+                SalaryHeader(title = name, showDisplay = true)
 
                 Column(
                     modifier = Modifier
@@ -287,10 +244,10 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
                     Text(text = "Estado civil")
                     SingleChoiceDropdown(
-                        options = professionalGroups,
-                        selectedOption = selectedProfessionalGroup.value,
+                        options = maritalStatuses,
+                        selectedOption = selectedMaritalStatus.value,
                         colors = fieldColors,
-                        onOptionSelected = { selectedProfessionalGroup.value = it }
+                        onOptionSelected = { selectedMaritalStatus.value = it }
                     )
 
                     Button(
@@ -424,10 +381,7 @@ private fun SalaryResultsScreen(
         modifier = modifier.padding(screenPadding),
         verticalArrangement = Arrangement.spacedBy(elementSpacing)
     ) {
-        Text(
-            text = "Resultados del cálculo",
-            style = MaterialTheme.typography.headlineSmall
-        )
+        SalaryHeader(title = "Resultados del cálculo", showDisplay = false)
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -455,6 +409,62 @@ private fun SalaryResultsScreen(
 private val CalculatorFont = FontFamily(
     Font(R.font.bitcount_prop_single_medium, weight = FontWeight.Medium)
 )
+
+@Composable
+private fun SalaryHeader(title: String, showDisplay: Boolean) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large.copy(
+            bottomStart = CornerSize(0.dp),
+            bottomEnd = CornerSize(0.dp)
+        ),
+        color = Color.Transparent,
+        contentColor = Color.White
+    ) {
+        Column(
+            modifier = Modifier
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color(0xFF073B35), Color(0xFF0D665B))
+                    )
+                )
+                .padding(
+                    start = 12.dp,
+                    top = 12.dp,
+                    end = 12.dp,
+                    bottom = if (showDisplay) 0.dp else 12.dp
+                ),
+            verticalArrangement = Arrangement.spacedBy(elementSpacing)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic),
+                    contentDescription = null,
+                    modifier = Modifier.size(42.dp)
+                )
+
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        lineBreak = LineBreak.Heading
+                    ),
+                    fontFamily = CalculatorFont,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            if (showDisplay) {
+                CalculatorDisplay(
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            }
+        }
+    }
+}
+
 @Composable
 private fun CalculatorDisplay(modifier: Modifier = Modifier) {
     Surface(
