@@ -34,6 +34,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.dp
+import java.text.NumberFormat
+import java.util.Locale
 
 private val screenPadding = 16.dp
 private val elementSpacing = 8.dp
@@ -219,6 +221,9 @@ private fun SalaryResultsScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val euroFormat = remember {
+        NumberFormat.getCurrencyInstance(Locale.forLanguageTag("es-ES"))
+    }
     BackHandler(onBack = onBack)
 
     Column(
@@ -239,14 +244,14 @@ private fun SalaryResultsScreen(
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(text = "Salario neto anual")
                 Text(
-                    text = "${result.netSalary.toPlainString()} €",
+                    text = euroFormat.format(result.netSalary),
                     style = MaterialTheme.typography.headlineMedium
                 )
             }
         }
-        Text(text = "Salario bruto anual: ${result.grossSalary.toPlainString()} €")
-        Text(text = "Retención de IRPF: ${result.incomeTax.toPlainString()} €")
-        Text(text = "Otras deducciones: ${result.otherDeductions.toPlainString()} €")
+        Text(text = "Salario bruto anual: ${euroFormat.format(result.grossSalary)}")
+        Text(text = "Retención de IRPF: ${euroFormat.format(result.incomeTax)}")
+        Text(text = "Otras deducciones: ${euroFormat.format(result.otherDeductions)}")
 
         Button(onClick = onBack) {
             Text(text = "Volver")
