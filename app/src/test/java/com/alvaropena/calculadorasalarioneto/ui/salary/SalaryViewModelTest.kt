@@ -66,6 +66,6 @@ class SalaryViewModelTest {
         onNumberOfChildrenChanged("0")
         professionalGroup?.let(::onProfessionalGroupChanged)
         onDisabilityPercentageChanged("0")
-        onMaritalStatusChanged("Soltero/a")
+        onMaritalStatusChanged(MaritalStatus.SINGLE)
     }
 }

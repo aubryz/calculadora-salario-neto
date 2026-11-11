@@ -35,7 +35,7 @@ internal class SalaryViewModel : ViewModel() {
         mutableUiState.update { it.copy(disabilityPercentage = value) }
     }
 
-    fun onMaritalStatusChanged(value: String) {
+    fun onMaritalStatusChanged(value: MaritalStatus) {
         mutableUiState.update { it.copy(selectedMaritalStatus = value) }
     }
 

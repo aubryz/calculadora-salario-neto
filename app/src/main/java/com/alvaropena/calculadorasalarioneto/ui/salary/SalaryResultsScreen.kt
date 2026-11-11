@@ -14,8 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.alvaropena.calculadorasalarioneto.R
 import com.alvaropena.calculadorasalarioneto.SalaryResult
 import com.alvaropena.calculadorasalarioneto.ui.salary.components.SalaryHeader
 import java.text.NumberFormat
@@ -36,7 +38,7 @@ internal fun SalaryResultsScreen(
         modifier = modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        SalaryHeader(title = "Resultados del cálculo", showDisplay = false)
+        SalaryHeader(title = stringResource(R.string.salary_results_title), showDisplay = false)
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -45,7 +47,7 @@ internal fun SalaryResultsScreen(
             )
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = "Salario neto anual")
+                Text(text = stringResource(R.string.salary_net_annual))
                 Text(
                     text = euroFormat.format(result.netSalary),
                     style = MaterialTheme.typography.headlineMedium
@@ -60,22 +62,22 @@ internal fun SalaryResultsScreen(
             )
         ) {
             val breakdown = listOf(
-                "Salario bruto anual" to result.grossSalary,
-                "Retención de IRPF" to result.incomeTax,
-                "Otras deducciones" to result.otherDeductions
+                R.string.salary_gross_annual to result.grossSalary,
+                R.string.salary_income_tax to result.incomeTax,
+                R.string.salary_other_deductions to result.otherDeductions
             )
 
             Column(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                breakdown.forEach { (label, amount) ->
+                breakdown.forEach { (labelRes, amount) ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text(
-                            text = label,
+                            text = stringResource(labelRes),
                             modifier = Modifier.weight(1f),
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -91,7 +93,7 @@ internal fun SalaryResultsScreen(
         }
 
         Button(onClick = onBack) {
-            Text(text = "Volver")
+            Text(text = stringResource(R.string.salary_back))
         }
     }
 }

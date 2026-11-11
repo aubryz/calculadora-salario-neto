@@ -55,7 +55,7 @@ internal fun SalaryFormScreen(
     onNumberOfChildrenChanged: (String) -> Unit,
     onProfessionalGroupChanged: (ProfessionalGroup) -> Unit,
     onDisabilityPercentageChanged: (String) -> Unit,
-    onMaritalStatusChanged: (String) -> Unit,
+    onMaritalStatusChanged: (MaritalStatus) -> Unit,
     onCalculate: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -80,7 +80,7 @@ internal fun SalaryFormScreen(
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
         ) {
             Column {
-                SalaryHeader(title = "Calculadora de salario neto", showDisplay = true)
+                SalaryHeader(title = stringResource(R.string.salary_form_title), showDisplay = true)
 
                 Column(
                     modifier = Modifier
@@ -88,7 +88,7 @@ internal fun SalaryFormScreen(
                         .padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(elementSpacing)
                 ) {
-                    Text(text = "Salario bruto anual")
+                    Text(text = stringResource(R.string.salary_gross_annual))
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = uiState.grossSalary,
@@ -109,7 +109,7 @@ internal fun SalaryFormScreen(
                         shape = MaterialTheme.shapes.small,
                     )
 
-                    Text(text = "Número de pagas")
+                    Text(text = stringResource(R.string.salary_payment_count))
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = uiState.numberOfPayments,
@@ -120,7 +120,7 @@ internal fun SalaryFormScreen(
                         shape = MaterialTheme.shapes.small,
                     )
 
-                    Text(text = "Edad")
+                    Text(text = stringResource(R.string.salary_age))
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = uiState.age,
@@ -131,7 +131,7 @@ internal fun SalaryFormScreen(
                         shape = MaterialTheme.shapes.small,
                     )
 
-                    Text(text = "Número de hijos")
+                    Text(text = stringResource(R.string.salary_children_count))
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = uiState.numberOfChildren,
@@ -142,16 +142,16 @@ internal fun SalaryFormScreen(
                         shape = MaterialTheme.shapes.small
                     )
 
-                    Text(text = "Grupo profesional")
+                    Text(text = stringResource(R.string.salary_professional_group))
                     SingleChoiceDropdown(
                         options = ProfessionalGroup.entries,
                         selectedOption = uiState.selectedProfessionalGroup,
-                        optionLabel = ProfessionalGroup::displayLabel,
+                        optionLabelRes = ProfessionalGroup::labelResource,
                         colors = fieldColors,
                         onOptionSelected = onProfessionalGroupChanged
                     )
 
-                    Text(text = "Grado de discapacidad (%)")
+                    Text(text = stringResource(R.string.salary_disability_percentage))
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = uiState.disabilityPercentage,
@@ -162,11 +162,11 @@ internal fun SalaryFormScreen(
                         shape = MaterialTheme.shapes.small
                     )
 
-                    Text(text = "Estado civil")
+                    Text(text = stringResource(R.string.salary_marital_status))
                     SingleChoiceDropdown(
-                        options = SalaryUiState.maritalStatuses,
+                        options = MaritalStatus.entries,
                         selectedOption = uiState.selectedMaritalStatus,
-                        optionLabel = { it },
+                        optionLabelRes = MaritalStatus::labelResource,
                         colors = fieldColors,
                         onOptionSelected = onMaritalStatusChanged
                     )
@@ -192,7 +192,7 @@ internal fun SalaryFormScreen(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = "Calcular salario neto",
+                                text = stringResource(R.string.salary_calculate),
                                 modifier = Modifier.weight(1f)
                             )
 
@@ -209,10 +209,17 @@ internal fun SalaryFormScreen(
     }
 }
 
-private fun ProfessionalGroup.displayLabel(): String = when (this) {
-    ProfessionalGroup.GROUP_1 -> "Grupo 1"
-    ProfessionalGroup.GROUP_2 -> "Grupo 2"
-    ProfessionalGroup.GROUP_3 -> "Grupo 3"
+private fun ProfessionalGroup.labelResource(): Int = when (this) {
+    ProfessionalGroup.GROUP_1 -> R.string.salary_professional_group_one
+    ProfessionalGroup.GROUP_2 -> R.string.salary_professional_group_two
+    ProfessionalGroup.GROUP_3 -> R.string.salary_professional_group_three
+}
+
+private fun MaritalStatus.labelResource(): Int = when (this) {
+    MaritalStatus.SINGLE -> R.string.salary_marital_status_single
+    MaritalStatus.MARRIED -> R.string.salary_marital_status_married
+    MaritalStatus.DIVORCED -> R.string.salary_marital_status_divorced
+    MaritalStatus.WIDOWED -> R.string.salary_marital_status_widowed
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -221,7 +228,7 @@ private fun <T : Any> SingleChoiceDropdown(
     colors: TextFieldColors,
     options: List<T>,
     selectedOption: T?,
-    optionLabel: (T) -> String,
+    optionLabelRes: (T) -> Int,
     onOptionSelected: (T) -> Unit
 ) {
     val expanded = remember { mutableStateOf(false) }
@@ -231,8 +238,8 @@ private fun <T : Any> SingleChoiceDropdown(
         onExpandedChange = { expanded.value = it }
     ) {
         OutlinedTextField(
-            value = selectedOption?.let(optionLabel).orEmpty(),
-            placeholder = { Text("Elige una opción") },
+            value = if (selectedOption == null) "" else stringResource(optionLabelRes(selectedOption)),
+            placeholder = { Text(stringResource(R.string.salary_select_option)) },
             colors = colors,
             shape = MaterialTheme.shapes.small,
             onValueChange = {},
@@ -251,7 +258,7 @@ private fun <T : Any> SingleChoiceDropdown(
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(text = optionLabel(option)) },
+                    text = { Text(text = stringResource(optionLabelRes(option))) },
                     onClick = {
                         onOptionSelected(option)
                         expanded.value = false

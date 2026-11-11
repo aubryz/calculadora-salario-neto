@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -145,7 +146,7 @@ private fun CalculatorDisplay(modifier: Modifier = Modifier) {
                     )
 
                     Text(
-                        text = "Actividad 1 para PDMD del gran CESAR CARRION",
+                        text = stringResource(R.string.salary_display_message),
                         modifier = Modifier
                             .weight(1f)
                             .basicMarquee(iterations = Int.MAX_VALUE),

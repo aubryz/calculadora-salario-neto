@@ -3,6 +3,13 @@ package com.alvaropena.calculadorasalarioneto.ui.salary
 import com.alvaropena.calculadorasalarioneto.ProfessionalGroup
 import com.alvaropena.calculadorasalarioneto.SalaryResult
 
+internal enum class MaritalStatus {
+    SINGLE,
+    MARRIED,
+    DIVORCED,
+    WIDOWED
+}
+
 internal data class SalaryUiState(
     val grossSalary: String = "",
     val numberOfPayments: String = "",
@@ -10,7 +17,7 @@ internal data class SalaryUiState(
     val numberOfChildren: String = "",
     val selectedProfessionalGroup: ProfessionalGroup? = null,
     val disabilityPercentage: String = "",
-    val selectedMaritalStatus: String = "",
+    val selectedMaritalStatus: MaritalStatus? = null,
     val result: SalaryResult? = null
 ) {
     val grossSalaryAmount = parseGrossSalary(grossSalary)
@@ -34,9 +41,5 @@ internal data class SalaryUiState(
         isChildCountValid &&
         isDisabilityValid &&
         selectedProfessionalGroup != null &&
-        selectedMaritalStatus in maritalStatuses
-
-    companion object {
-        val maritalStatuses = listOf("Soltero/a", "Casado/a", "Divorciado/a", "Viudo/a")
-    }
+        selectedMaritalStatus != null
 }
