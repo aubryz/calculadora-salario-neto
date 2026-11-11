@@ -1,6 +1,7 @@
 package com.alvaropena.calculadorasalarioneto.ui.salary
 
 import androidx.lifecycle.ViewModel
+import com.alvaropena.calculadorasalarioneto.ProfessionalGroup
 import com.alvaropena.calculadorasalarioneto.calculateSalary
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +27,7 @@ internal class SalaryViewModel : ViewModel() {
         mutableUiState.update { it.copy(numberOfChildren = value) }
     }
 
-    fun onProfessionalGroupChanged(value: String) {
+    fun onProfessionalGroupChanged(value: ProfessionalGroup) {
         mutableUiState.update { it.copy(selectedProfessionalGroup = value) }
     }
 
@@ -41,11 +42,14 @@ internal class SalaryViewModel : ViewModel() {
     fun onCalculate() {
         mutableUiState.update { state ->
             val grossSalaryAmount = state.grossSalaryAmount
-            if (!state.canCalculate || grossSalaryAmount == null) return@update state
+            val professionalGroup = state.selectedProfessionalGroup
+            if (!state.canCalculate || grossSalaryAmount == null || professionalGroup == null) {
+                return@update state
+            }
 
             val result = calculateSalary(
                 grossSalary = grossSalaryAmount,
-                professionalGroup = state.selectedProfessionalGroup
+                professionalGroup = professionalGroup
             )
             state.copy(result = result)
         }

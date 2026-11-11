@@ -36,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.alvaropena.calculadorasalarioneto.ProfessionalGroup
 import com.alvaropena.calculadorasalarioneto.R
 import com.alvaropena.calculadorasalarioneto.ui.salary.components.SalaryHeader
 import com.alvaropena.calculadorasalarioneto.ui.theme.CalculadoraSalarioNetoTheme
@@ -50,7 +51,7 @@ internal fun SalaryFormScreen(
     onNumberOfPaymentsChanged: (String) -> Unit,
     onAgeChanged: (String) -> Unit,
     onNumberOfChildrenChanged: (String) -> Unit,
-    onProfessionalGroupChanged: (String) -> Unit,
+    onProfessionalGroupChanged: (ProfessionalGroup) -> Unit,
     onDisabilityPercentageChanged: (String) -> Unit,
     onMaritalStatusChanged: (String) -> Unit,
     onCalculate: () -> Unit,
@@ -130,8 +131,9 @@ internal fun SalaryFormScreen(
 
                     Text(text = "Grupo profesional")
                     SingleChoiceDropdown(
-                        options = SalaryUiState.professionalGroups,
+                        options = ProfessionalGroup.entries,
                         selectedOption = uiState.selectedProfessionalGroup,
+                        optionLabel = ProfessionalGroup::displayLabel,
                         colors = fieldColors,
                         onOptionSelected = onProfessionalGroupChanged
                     )
@@ -151,6 +153,7 @@ internal fun SalaryFormScreen(
                     SingleChoiceDropdown(
                         options = SalaryUiState.maritalStatuses,
                         selectedOption = uiState.selectedMaritalStatus,
+                        optionLabel = { it },
                         colors = fieldColors,
                         onOptionSelected = onMaritalStatusChanged
                     )
@@ -193,13 +196,20 @@ internal fun SalaryFormScreen(
     }
 }
 
+private fun ProfessionalGroup.displayLabel(): String = when (this) {
+    ProfessionalGroup.GROUP_1 -> "Grupo 1"
+    ProfessionalGroup.GROUP_2 -> "Grupo 2"
+    ProfessionalGroup.GROUP_3 -> "Grupo 3"
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SingleChoiceDropdown(
+private fun <T : Any> SingleChoiceDropdown(
     colors: TextFieldColors,
-    options: List<String>,
-    selectedOption: String,
-    onOptionSelected: (String) -> Unit
+    options: List<T>,
+    selectedOption: T?,
+    optionLabel: (T) -> String,
+    onOptionSelected: (T) -> Unit
 ) {
     val expanded = remember { mutableStateOf(false) }
 
@@ -208,7 +218,7 @@ private fun SingleChoiceDropdown(
         onExpandedChange = { expanded.value = it }
     ) {
         OutlinedTextField(
-            value = selectedOption,
+            value = selectedOption?.let(optionLabel).orEmpty(),
             placeholder = { Text("Elige una opción") },
             colors = colors,
             shape = MaterialTheme.shapes.small,
@@ -228,7 +238,7 @@ private fun SingleChoiceDropdown(
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(text = option) },
+                    text = { Text(text = optionLabel(option)) },
                     onClick = {
                         onOptionSelected(option)
                         expanded.value = false

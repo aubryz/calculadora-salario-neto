@@ -1,5 +1,6 @@
 package com.alvaropena.calculadorasalarioneto.ui.salary
 
+import com.alvaropena.calculadorasalarioneto.ProfessionalGroup
 import com.alvaropena.calculadorasalarioneto.SalaryResult
 
 internal data class SalaryUiState(
@@ -7,7 +8,7 @@ internal data class SalaryUiState(
     val numberOfPayments: String = "",
     val age: String = "",
     val numberOfChildren: String = "",
-    val selectedProfessionalGroup: String = "",
+    val selectedProfessionalGroup: ProfessionalGroup? = null,
     val disabilityPercentage: String = "",
     val selectedMaritalStatus: String = "",
     val result: SalaryResult? = null
@@ -32,11 +33,10 @@ internal data class SalaryUiState(
         isAgeValid &&
         isChildCountValid &&
         isDisabilityValid &&
-        selectedProfessionalGroup in professionalGroups &&
+        selectedProfessionalGroup != null &&
         selectedMaritalStatus in maritalStatuses
 
     companion object {
-        val professionalGroups = listOf("Grupo 1", "Grupo 2", "Grupo 3")
         val maritalStatuses = listOf("Soltero/a", "Casado/a", "Divorciado/a", "Viudo/a")
     }
 }
