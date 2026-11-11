@@ -35,10 +35,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -50,6 +52,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.drawWithCache
@@ -59,6 +63,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -272,6 +277,14 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
                     )
 
                     Button(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 48.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF0D665B),
+                            contentColor = Color.White
+                        ),
                         onClick = {
                             if (grossSalaryAmount != null) {
                                 salaryResult.value = calculateSalary(
@@ -282,7 +295,23 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
                         },
                         enabled = canCalculate
                     ) {
-                        Text(text = "Calcular")
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = "Calcular salario neto",
+                                modifier = Modifier.weight(1f)
+                            )
+
+                            Icon(
+                                painter = painterResource(R.drawable.ic_arrow_forward),
+                                contentDescription = null,
+                                modifier = Modifier.size(28.dp),
+                                tint = if (canCalculate) Color(0xFFF3BD72) else LocalContentColor.current
+                            )
+                        }
                     }
                 }
             }
