@@ -34,13 +34,16 @@ class SalaryViewModelTest {
     }
 
     @Test
-    fun validFormWithDecimalCommaProducesNetSalary() {
+    fun validFormWithGroupedAmountProducesNetSalary() {
         val viewModel = viewModelWithForm()
+        viewModel.onGrossSalaryChanged("30.000,50")
         assertTrue(viewModel.uiState.value.canCalculate)
 
         viewModel.onCalculate()
 
-        assertEquals(BigDecimal("25200.00"), viewModel.uiState.value.result?.netSalary)
+        val result = viewModel.uiState.value.result
+        assertEquals(BigDecimal("30000.50"), result?.grossSalary)
+        assertEquals(BigDecimal("25200.41"), result?.netSalary)
     }
 
     @Test

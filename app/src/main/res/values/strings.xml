@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CalculadoraSalarioNeto</string>
+    <string name="salary_gross_amount_error">Introduce un importe mayor que 0 con hasta dos decimales (por ejemplo, 30.000,50).</string>
 </resources>

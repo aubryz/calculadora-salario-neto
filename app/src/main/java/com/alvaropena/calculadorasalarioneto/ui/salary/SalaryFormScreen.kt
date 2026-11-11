@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,6 +44,7 @@ import com.alvaropena.calculadorasalarioneto.ui.theme.CalculadoraSalarioNetoThem
 
 private val screenPadding = 16.dp
 private val elementSpacing = 8.dp
+private val formContentColor = Color(0xFFF0F7F3)
 
 @Composable
 internal fun SalaryFormScreen(
@@ -57,6 +59,7 @@ internal fun SalaryFormScreen(
     onCalculate: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val showGrossSalaryError = uiState.grossSalary.isNotBlank() && !uiState.isGrossSalaryValid
     val fieldBackground = MaterialTheme.colorScheme.surfaceContainerLowest
     val fieldColors = OutlinedTextFieldDefaults.colors(
         focusedContainerColor = fieldBackground,
@@ -73,7 +76,7 @@ internal fun SalaryFormScreen(
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.large,
             color = MaterialTheme.colorScheme.surfaceContainerLow,
-            contentColor = Color(0xFFF0F7F3),
+            contentColor = formContentColor,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
         ) {
             Column {
@@ -91,7 +94,17 @@ internal fun SalaryFormScreen(
                         value = uiState.grossSalary,
                         onValueChange = onGrossSalaryChanged,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        isError = uiState.grossSalary.isNotBlank() && !uiState.isGrossSalaryValid,
+                        isError = showGrossSalaryError,
+                        supportingText = if (showGrossSalaryError) {
+                            {
+                                Text(
+                                    text = stringResource(R.string.salary_gross_amount_error),
+                                    color = formContentColor
+                                )
+                            }
+                        } else {
+                            null
+                        },
                         colors = fieldColors,
                         shape = MaterialTheme.shapes.small,
                     )

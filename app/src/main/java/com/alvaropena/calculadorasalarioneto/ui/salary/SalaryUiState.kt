@@ -13,8 +13,8 @@ internal data class SalaryUiState(
     val selectedMaritalStatus: String = "",
     val result: SalaryResult? = null
 ) {
-    val grossSalaryAmount = grossSalary.trim().replace(',', '.').toBigDecimalOrNull()
-    val isGrossSalaryValid = grossSalaryAmount != null && grossSalaryAmount.signum() > 0
+    val grossSalaryAmount = parseGrossSalary(grossSalary)
+    val isGrossSalaryValid = grossSalaryAmount != null
 
     private val paymentCount = numberOfPayments.trim().toIntOrNull()
     val isPaymentCountValid = paymentCount != null && paymentCount > 0
