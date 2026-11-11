@@ -27,6 +27,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -36,9 +37,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.alvaropena.calculadorasalarioneto.R
-import com.alvaropena.calculadorasalarioneto.SalaryResult
-import com.alvaropena.calculadorasalarioneto.calculateSalary
 import com.alvaropena.calculadorasalarioneto.ui.salary.components.SalaryHeader
 import com.alvaropena.calculadorasalarioneto.ui.theme.CalculadoraSalarioNetoTheme
 
@@ -46,54 +47,22 @@ private val screenPadding = 16.dp
 private val elementSpacing = 8.dp
 
 @Composable
-internal fun SalaryCalculatorScreen(modifier: Modifier = Modifier) {
-    val grossSalary = remember { mutableStateOf("") }
-    val numberOfPayments = remember { mutableStateOf("") }
-    val age = remember { mutableStateOf("") }
-    val numberOfChildren = remember { mutableStateOf("") }
-    val professionalGroups = listOf("Grupo 1", "Grupo 2", "Grupo 3")
-    val selectedProfessionalGroup = remember { mutableStateOf("") }
-    val disabilityPercentage = remember { mutableStateOf("") }
-    val maritalStatuses = listOf("Soltero/a", "Casado/a", "Divorciado/a", "Viudo/a")
-    val selectedMaritalStatus = remember { mutableStateOf("") }
-
-    val grossSalaryAmount = grossSalary.value
-        .trim()
-        .replace(',', '.')
-        .toBigDecimalOrNull()
-    val isGrossSalaryValid = grossSalaryAmount != null && grossSalaryAmount.signum() > 0
-
-    val paymentCount = numberOfPayments.value.trim().toIntOrNull()
-    val isPaymentCountValid = paymentCount != null && paymentCount > 0
-
-    val ageYears = age.value.trim().toIntOrNull()
-    val isAgeValid = ageYears != null && ageYears > 0
-
-    val childCount = numberOfChildren.value.trim().toIntOrNull()
-    val isChildCountValid = childCount != null && childCount >= 0
-
-    val disabilityValue = disabilityPercentage.value.trim().toIntOrNull()
-    val isDisabilityValid = disabilityValue != null && disabilityValue in 0..100
-
-    val canCalculate = isGrossSalaryValid &&
-            isPaymentCountValid &&
-            isAgeValid &&
-            isChildCountValid &&
-            isDisabilityValid &&
-            selectedProfessionalGroup.value in professionalGroups &&
-            selectedMaritalStatus.value in maritalStatuses
-
-    val salaryResult = remember { mutableStateOf<SalaryResult?>(null) }
-    val result = salaryResult.value
+internal fun SalaryCalculatorScreen(
+    modifier: Modifier = Modifier,
+    viewModel: SalaryViewModel = viewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val result = uiState.result
 
     if (result != null) {
         SalaryResultsScreen(
             result = result,
-            onBack = { salaryResult.value = null },
+            onBack = viewModel::onBackToForm,
             modifier = modifier
         )
         return
     }
+
     val fieldBackground = MaterialTheme.colorScheme.surfaceContainerLowest
     val fieldColors = OutlinedTextFieldDefaults.colors(
         focusedContainerColor = fieldBackground,
@@ -125,12 +94,10 @@ internal fun SalaryCalculatorScreen(modifier: Modifier = Modifier) {
                     Text(text = "Salario bruto anual")
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = grossSalary.value,
-                        onValueChange = { newText ->
-                            grossSalary.value = newText
-                        },
+                        value = uiState.grossSalary,
+                        onValueChange = viewModel::onGrossSalaryChanged,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        isError = grossSalary.value.isNotBlank() && !isGrossSalaryValid,
+                        isError = uiState.grossSalary.isNotBlank() && !uiState.isGrossSalaryValid,
                         colors = fieldColors,
                         shape = MaterialTheme.shapes.small,
                     )
@@ -138,12 +105,10 @@ internal fun SalaryCalculatorScreen(modifier: Modifier = Modifier) {
                     Text(text = "Número de pagas")
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = numberOfPayments.value,
-                        onValueChange = { newText ->
-                            numberOfPayments.value = newText
-                        },
+                        value = uiState.numberOfPayments,
+                        onValueChange = viewModel::onNumberOfPaymentsChanged,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        isError = numberOfPayments.value.isNotBlank() && !isPaymentCountValid,
+                        isError = uiState.numberOfPayments.isNotBlank() && !uiState.isPaymentCountValid,
                         colors = fieldColors,
                         shape = MaterialTheme.shapes.small,
                     )
@@ -151,12 +116,10 @@ internal fun SalaryCalculatorScreen(modifier: Modifier = Modifier) {
                     Text(text = "Edad")
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = age.value,
-                        onValueChange = { newText ->
-                            age.value = newText
-                        },
+                        value = uiState.age,
+                        onValueChange = viewModel::onAgeChanged,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        isError = age.value.isNotBlank() && !isAgeValid,
+                        isError = uiState.age.isNotBlank() && !uiState.isAgeValid,
                         colors = fieldColors,
                         shape = MaterialTheme.shapes.small,
                     )
@@ -164,43 +127,39 @@ internal fun SalaryCalculatorScreen(modifier: Modifier = Modifier) {
                     Text(text = "Número de hijos")
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = numberOfChildren.value,
-                        onValueChange = { newText ->
-                            numberOfChildren.value = newText
-                        },
+                        value = uiState.numberOfChildren,
+                        onValueChange = viewModel::onNumberOfChildrenChanged,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        isError = numberOfChildren.value.isNotBlank() && !isChildCountValid,
+                        isError = uiState.numberOfChildren.isNotBlank() && !uiState.isChildCountValid,
                         colors = fieldColors,
                         shape = MaterialTheme.shapes.small
                     )
 
                     Text(text = "Grupo profesional")
                     SingleChoiceDropdown(
-                        options = professionalGroups,
-                        selectedOption = selectedProfessionalGroup.value,
+                        options = SalaryUiState.professionalGroups,
+                        selectedOption = uiState.selectedProfessionalGroup,
                         colors = fieldColors,
-                        onOptionSelected = { selectedProfessionalGroup.value = it }
+                        onOptionSelected = viewModel::onProfessionalGroupChanged
                     )
 
                     Text(text = "Grado de discapacidad (%)")
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = disabilityPercentage.value,
-                        onValueChange = { newText ->
-                            disabilityPercentage.value = newText
-                        },
+                        value = uiState.disabilityPercentage,
+                        onValueChange = viewModel::onDisabilityPercentageChanged,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        isError = disabilityPercentage.value.isNotBlank() && !isDisabilityValid,
+                        isError = uiState.disabilityPercentage.isNotBlank() && !uiState.isDisabilityValid,
                         colors = fieldColors,
                         shape = MaterialTheme.shapes.small
                     )
 
                     Text(text = "Estado civil")
                     SingleChoiceDropdown(
-                        options = maritalStatuses,
-                        selectedOption = selectedMaritalStatus.value,
+                        options = SalaryUiState.maritalStatuses,
+                        selectedOption = uiState.selectedMaritalStatus,
                         colors = fieldColors,
-                        onOptionSelected = { selectedMaritalStatus.value = it }
+                        onOptionSelected = viewModel::onMaritalStatusChanged
                     )
 
                     Button(
@@ -215,15 +174,8 @@ internal fun SalaryCalculatorScreen(modifier: Modifier = Modifier) {
                             disabledContainerColor = Color(0xFF084C44),
                             disabledContentColor = Color(0xFFB8D4CB)
                         ),
-                        onClick = {
-                            if (grossSalaryAmount != null) {
-                                salaryResult.value = calculateSalary(
-                                    grossSalary = grossSalaryAmount,
-                                    professionalGroup = selectedProfessionalGroup.value
-                                )
-                            }
-                        },
-                        enabled = canCalculate
+                        onClick = viewModel::onCalculate,
+                        enabled = uiState.canCalculate
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -298,6 +250,6 @@ private fun SingleChoiceDropdown(
 @Composable
 private fun SalaryCalculatorScreenPreview() {
     CalculadoraSalarioNetoTheme(darkTheme = false, dynamicColor = false) {
-        SalaryCalculatorScreen()
+        SalaryCalculatorScreen(viewModel = remember { SalaryViewModel() })
     }
 }
