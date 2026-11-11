@@ -71,6 +71,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.style.LineBreak
+import androidx.compose.ui.text.style.TextAlign
 
 private val screenPadding = 16.dp
 private val elementSpacing = 8.dp
@@ -397,9 +398,43 @@ private fun SalaryResultsScreen(
                 )
             }
         }
-        Text(text = "Salario bruto anual: ${euroFormat.format(result.grossSalary)}")
-        Text(text = "Retención de IRPF: ${euroFormat.format(result.incomeTax)}")
-        Text(text = "Otras deducciones: ${euroFormat.format(result.otherDeductions)}")
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
+        ) {
+            val breakdown = listOf(
+                "Salario bruto anual" to result.grossSalary,
+                "Retención de IRPF" to result.incomeTax,
+                "Otras deducciones" to result.otherDeductions
+            )
+
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                breakdown.forEach { (label, amount) ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = label,
+                            modifier = Modifier.weight(1f),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            text = euroFormat.format(amount),
+                            modifier = Modifier.weight(1f),
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.End
+                        )
+                    }
+                }
+            }
+        }
 
         Button(onClick = onBack) {
             Text(text = "Volver")
