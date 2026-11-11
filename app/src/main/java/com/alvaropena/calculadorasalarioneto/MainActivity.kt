@@ -36,6 +36,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.dp
 import java.text.NumberFormat
 import java.util.Locale
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 
 private val screenPadding = 16.dp
 private val elementSpacing = 8.dp
@@ -148,8 +153,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             isError = numberOfChildren.value.isNotBlank() && !isChildCountValid
         )
-        Text(text = "Grupo profesional")
-        SingleChoiceOptions(
+        SingleChoiceDropdown(
+            label = "Grupo profesional",
             options = professionalGroups,
             selectedOption = selectedProfessionalGroup.value,
             onOptionSelected = { option ->
@@ -166,8 +171,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             isError = disabilityPercentage.value.isNotBlank() && !isDisabilityValid
         )
-        Text(text = "Estado civil")
-        SingleChoiceOptions(
+        SingleChoiceDropdown(
+            label = "Estado civil",
             options = maritalStatuses,
             selectedOption = selectedMaritalStatus.value,
             onOptionSelected = { option ->
@@ -210,6 +215,50 @@ private fun SingleChoiceOptions(
             ) {
                 RadioButton(selected = isSelected, onClick = null)
                 Text(text = option)
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SingleChoiceDropdown(
+    label: String,
+    options: List<String>,
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit
+) {
+    val expanded = remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded.value,
+        onExpandedChange = { expanded.value = it }
+    ) {
+        OutlinedTextField(
+            value = selectedOption,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(text = label) },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded.value,
+            onDismissRequest = { expanded.value = false }
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(text = option) },
+                    onClick = {
+                        onOptionSelected(option)
+                        expanded.value = false
+                    }
+                )
             }
         }
     }
