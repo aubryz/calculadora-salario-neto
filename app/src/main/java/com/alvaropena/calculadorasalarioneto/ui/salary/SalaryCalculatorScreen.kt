@@ -1,5 +1,6 @@
 package com.alvaropena.calculadorasalarioneto.ui.salary
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -13,6 +14,8 @@ internal fun SalaryCalculatorScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val result = uiState.result
+
+    BackHandler(enabled = result != null, onBack = viewModel::onBackToForm)
 
     if (result != null) {
         SalaryResultsScreen(

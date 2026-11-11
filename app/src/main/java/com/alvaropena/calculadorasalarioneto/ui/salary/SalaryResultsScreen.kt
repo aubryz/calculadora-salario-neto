@@ -1,6 +1,5 @@
 package com.alvaropena.calculadorasalarioneto.ui.salary
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,16 +9,20 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alvaropena.calculadorasalarioneto.R
 import com.alvaropena.calculadorasalarioneto.SalaryResult
 import com.alvaropena.calculadorasalarioneto.ui.salary.components.SalaryHeader
+import com.alvaropena.calculadorasalarioneto.ui.theme.CalculadoraSalarioNetoTheme
+import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -32,7 +35,6 @@ internal fun SalaryResultsScreen(
     val euroFormat = remember {
         NumberFormat.getCurrencyInstance(Locale.forLanguageTag("es-ES"))
     }
-    BackHandler(onBack = onBack)
 
     Column(
         modifier = modifier.padding(16.dp),
@@ -94,6 +96,24 @@ internal fun SalaryResultsScreen(
 
         Button(onClick = onBack) {
             Text(text = stringResource(R.string.salary_back))
+        }
+    }
+}
+
+@Preview(name = "Resultados del salario", showBackground = true)
+@Composable
+private fun SalaryResultsScreenPreview() {
+    CalculadoraSalarioNetoTheme(darkTheme = false, dynamicColor = false) {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            SalaryResultsScreen(
+                result = SalaryResult(
+                    grossSalary = BigDecimal("30000.50"),
+                    incomeTax = BigDecimal("4500.08"),
+                    otherDeductions = BigDecimal("300.01"),
+                    netSalary = BigDecimal("25200.41")
+                ),
+                onBack = {}
+            )
         }
     }
 }
