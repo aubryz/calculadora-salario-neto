@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">CalculadoraSalarioNeto</string>
+    <string name="salary_gross_amount_error">Introduce un importe mayor que 0 con hasta dos decimales (por ejemplo, 30.000,50).</string>
+    <string name="salary_form_title">Calculadora de salario neto</string>
+    <string name="salary_gross_annual">Salario bruto anual</string>
+    <string name="salary_payment_count">Número de pagas</string>
+    <string name="salary_age">Edad</string>
+    <string name="salary_children_count">Número de hijos</string>
+    <string name="salary_professional_group">Grupo profesional</string>
+    <string name="salary_disability_percentage" formatted="false">Grado de discapacidad (%)</string>
+    <string name="salary_marital_status">Estado civil</string>
+    <string name="salary_calculate">Calcular salario neto</string>
+    <string name="salary_select_option">Elige una opción</string>
+    <string name="salary_professional_group_one">Grupo 1</string>
+    <string name="salary_professional_group_two">Grupo 2</string>
+    <string name="salary_professional_group_three">Grupo 3</string>
+    <string name="salary_marital_status_single">Soltero/a</string>
+    <string name="salary_marital_status_married">Casado/a</string>
+    <string name="salary_marital_status_divorced">Divorciado/a</string>
+    <string name="salary_marital_status_widowed">Viudo/a</string>
+    <string name="salary_results_title">Resultados del cálculo</string>
+    <string name="salary_net_annual">Salario neto anual</string>
+    <string name="salary_income_tax">Retención de IRPF</string>
+    <string name="salary_other_deductions">Otras deducciones</string>
+    <string name="salary_back">Volver</string>
+    <string name="salary_display_message">Actividad 1 para PDMD del gran CESAR CARRION</string>
 </resources>

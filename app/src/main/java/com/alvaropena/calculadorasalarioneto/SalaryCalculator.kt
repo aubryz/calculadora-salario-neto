@@ -9,6 +9,12 @@ fun calculateIncomeTax(grossSalary: BigDecimal): BigDecimal {
     return incomeTax.setScale(2, RoundingMode.HALF_UP)
 }
 
+enum class ProfessionalGroup {
+    GROUP_1,
+    GROUP_2,
+    GROUP_3
+}
+
 data class SalaryResult(
     val grossSalary: BigDecimal,
     val incomeTax: BigDecimal,
@@ -18,7 +24,7 @@ data class SalaryResult(
 
 fun calculateSalary(
     grossSalary: BigDecimal,
-    professionalGroup: String
+    professionalGroup: ProfessionalGroup
 ): SalaryResult {
     val incomeTax = calculateIncomeTax(grossSalary)
     val otherDeductions = calculateOtherDeductions(grossSalary, professionalGroup)
@@ -34,13 +40,12 @@ fun calculateSalary(
 
 fun calculateOtherDeductions(
     grossSalary: BigDecimal,
-    professionalGroup: String
+    professionalGroup: ProfessionalGroup
 ): BigDecimal {
     val deductionRate = when (professionalGroup) {
-        "Grupo 1" -> BigDecimal("0.01")
-        "Grupo 2" -> BigDecimal("0.02")
-        "Grupo 3" -> BigDecimal("0.03")
-        else -> throw IllegalArgumentException("Unknown professional group")
+        ProfessionalGroup.GROUP_1 -> BigDecimal("0.01")
+        ProfessionalGroup.GROUP_2 -> BigDecimal("0.02")
+        ProfessionalGroup.GROUP_3 -> BigDecimal("0.03")
     }
 
     val deductions = grossSalary * deductionRate
