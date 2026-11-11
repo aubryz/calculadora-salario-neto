@@ -9,7 +9,10 @@ internal enum class MaritalStatus {
     DIVORCED,
     WIDOWED
 }
-
+/**
+ * Representa los valores del formulario y el resultado del cálculo, si existe.
+ * Deriva la validez de cada campo y si el formulario permite calcular.
+ */
 internal data class SalaryUiState(
     val grossSalary: String = "",
     val numberOfPayments: String = "",
@@ -20,6 +23,7 @@ internal data class SalaryUiState(
     val selectedMaritalStatus: MaritalStatus? = null,
     val result: SalaryResult? = null
 ) {
+    // Conserva el texto tal como se escribió y obtiene el importe para el cálculo.
     val grossSalaryAmount = parseGrossSalary(grossSalary)
     val isGrossSalaryValid = grossSalaryAmount != null
 

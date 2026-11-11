@@ -36,11 +36,15 @@ private val LightColorScheme = lightColorScheme(
     surfaceContainerLow = Color(0xFF0D665B),
     surfaceContainerLowest = Color.White
 )
-
+/**
+ * Aplica la paleta de colores y la tipografía a la interfaz de la calculadora.
+ * Por defecto, usa la paleta propia de la app y sigue el modo claro u oscuro del sistema.
+ */
 @Composable
 fun CalculadoraSalarioNetoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
+    // Conserva la paleta de la app por defecto. Los colores dinámicos
+    // se pueden activar a partir de Android 12.
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {

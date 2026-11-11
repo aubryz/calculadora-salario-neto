@@ -41,7 +41,11 @@ import com.alvaropena.calculadorasalarioneto.ProfessionalGroup
 import com.alvaropena.calculadorasalarioneto.R
 import com.alvaropena.calculadorasalarioneto.ui.salary.components.SalaryHeader
 import com.alvaropena.calculadorasalarioneto.ui.theme.CalculadoraSalarioNetoTheme
-
+/**
+ * Muestra los campos y las validaciones a partir del estado del formulario.
+ * Comunica las ediciones, las selecciones y la solicitud de cálculo
+ * mediante las funciones que recibe.
+ */
 private val screenPadding = 16.dp
 private val elementSpacing = 8.dp
 private val formContentColor = Color(0xFFF0F7F3)
@@ -59,6 +63,7 @@ internal fun SalaryFormScreen(
     onCalculate: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // El aviso de formato solo aparece si el usuario ha introducido un importe.
     val showGrossSalaryError = uiState.grossSalary.isNotBlank() && !uiState.isGrossSalaryValid
     val fieldBackground = MaterialTheme.colorScheme.surfaceContainerLowest
     val fieldColors = OutlinedTextFieldDefaults.colors(
@@ -221,7 +226,11 @@ private fun MaritalStatus.labelResource(): Int = when (this) {
     MaritalStatus.DIVORCED -> R.string.salary_marital_status_divorced
     MaritalStatus.WIDOWED -> R.string.salary_marital_status_widowed
 }
-
+/**
+ * Muestra un desplegable de selección única para cualquier tipo de opción.
+ * Recibe la selección actual y comunica los cambios al formulario.
+ * El estado de apertura se gestiona dentro del desplegable.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun <T : Any> SingleChoiceDropdown(
