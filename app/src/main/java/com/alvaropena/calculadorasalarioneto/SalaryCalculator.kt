@@ -2,7 +2,9 @@ package com.alvaropena.calculadorasalarioneto
 
 import java.math.BigDecimal
 import java.math.RoundingMode
-
+/**
+ * Aplica la retención fija del 15 % definida para la simulación del ejercicio.
+ */
 fun calculateIncomeTax(grossSalary: BigDecimal): BigDecimal {
     val simulatedTaxRate = BigDecimal("0.15")
     val incomeTax = grossSalary * simulatedTaxRate
@@ -21,7 +23,10 @@ data class SalaryResult(
     val otherDeductions: BigDecimal,
     val netSalary: BigDecimal
 )
-
+/**
+ * Calcula el salario neto anual restando el IRPF y las otras deducciones.
+ * Cada deducción se redondea a céntimos antes de restarla del salario bruto.
+ */
 fun calculateSalary(
     grossSalary: BigDecimal,
     professionalGroup: ProfessionalGroup

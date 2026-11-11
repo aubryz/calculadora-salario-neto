@@ -7,7 +7,10 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-
+/**
+ * Rellena el formulario mediante las mismas acciones que usa la interfaz.
+ * Pasar null como grupo profesional permite probar un formulario incompleto.
+ */
 class SalaryViewModelTest {
     @Test
     fun invalidDisabilityPreventsCalculation() {

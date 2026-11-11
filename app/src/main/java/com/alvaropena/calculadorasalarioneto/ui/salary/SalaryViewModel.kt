@@ -6,9 +6,13 @@ import com.alvaropena.calculadorasalarioneto.calculateSalary
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-
+/**
+ * Mantiene el estado del formulario y responde a las acciones del usuario.
+ * Solicita el cálculo cuando los datos son válidos y publica el resultado.
+ */
 internal class SalaryViewModel : ViewModel() {
     private val mutableUiState = MutableStateFlow(SalaryUiState())
+    // Expone el estado como un flujo de solo lectura para que la interfaz pueda observarlo.
     val uiState = mutableUiState.asStateFlow()
 
     fun onGrossSalaryChanged(value: String) {
@@ -56,6 +60,7 @@ internal class SalaryViewModel : ViewModel() {
     }
 
     fun onBackToForm() {
+        // Al limpiar el resultado, se vuelve al formulario con los datos ya introducidos.
         mutableUiState.update { it.copy(result = null) }
     }
 }

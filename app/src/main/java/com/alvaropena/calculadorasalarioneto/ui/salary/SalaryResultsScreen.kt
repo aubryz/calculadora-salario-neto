@@ -25,13 +25,17 @@ import com.alvaropena.calculadorasalarioneto.ui.theme.CalculadoraSalarioNetoThem
 import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.Locale
-
+/**
+ * Presenta el salario neto anual y el desglose del cálculo.
+ * Delega la vuelta al formulario en la acción que recibe.
+ */
 @Composable
 internal fun SalaryResultsScreen(
     result: SalaryResult,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Mantiene el formato monetario español aunque el dispositivo use otra región.
     val euroFormat = remember {
         NumberFormat.getCurrencyInstance(Locale.forLanguageTag("es-ES"))
     }

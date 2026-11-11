@@ -40,7 +40,10 @@ import com.alvaropena.calculadorasalarioneto.R
 private val CalculatorFont = FontFamily(
     Font(R.font.bitcount_prop_single_medium, weight = FontWeight.Medium)
 )
-
+/**
+ * Cabecera compartida por el formulario y los resultados.
+ * Puede incluir un visor decorativo debajo del título.
+ */
 @Composable
 internal fun SalaryHeader(title: String, showDisplay: Boolean) {
     Surface(
@@ -173,6 +176,7 @@ private fun CalculatorDisplay(modifier: Modifier = Modifier) {
 
                         onDrawWithContent {
                             drawContent()
+                            // Usa la opacidad del degradado para desvanecer la parte inferior de las teclas.
                             drawRect(brush = fade, blendMode = BlendMode.DstIn)
                         }
                     },
