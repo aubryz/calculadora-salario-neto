@@ -1,50 +1,10 @@
 package com.alvaropena.calculadorasalarioneto.ui.salary
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.alvaropena.calculadorasalarioneto.R
-import com.alvaropena.calculadorasalarioneto.ui.salary.components.SalaryHeader
-import com.alvaropena.calculadorasalarioneto.ui.theme.CalculadoraSalarioNetoTheme
-
-private val screenPadding = 16.dp
-private val elementSpacing = 8.dp
 
 @Composable
 internal fun SalaryCalculatorScreen(
@@ -63,193 +23,16 @@ internal fun SalaryCalculatorScreen(
         return
     }
 
-    val fieldBackground = MaterialTheme.colorScheme.surfaceContainerLowest
-    val fieldColors = OutlinedTextFieldDefaults.colors(
-        focusedContainerColor = fieldBackground,
-        unfocusedContainerColor = fieldBackground,
-        errorContainerColor = fieldBackground
-    )
-
-    Column(
+    SalaryFormScreen(
+        uiState = uiState,
+        onGrossSalaryChanged = viewModel::onGrossSalaryChanged,
+        onNumberOfPaymentsChanged = viewModel::onNumberOfPaymentsChanged,
+        onAgeChanged = viewModel::onAgeChanged,
+        onNumberOfChildrenChanged = viewModel::onNumberOfChildrenChanged,
+        onProfessionalGroupChanged = viewModel::onProfessionalGroupChanged,
+        onDisabilityPercentageChanged = viewModel::onDisabilityPercentageChanged,
+        onMaritalStatusChanged = viewModel::onMaritalStatusChanged,
+        onCalculate = viewModel::onCalculate,
         modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .padding(screenPadding)
-    ) {
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.large,
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
-            contentColor = Color(0xFFF0F7F3),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-        ) {
-            Column {
-                SalaryHeader(title = "Calculadora de salario neto", showDisplay = true)
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(elementSpacing)
-                ) {
-                    Text(text = "Salario bruto anual")
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = uiState.grossSalary,
-                        onValueChange = viewModel::onGrossSalaryChanged,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        isError = uiState.grossSalary.isNotBlank() && !uiState.isGrossSalaryValid,
-                        colors = fieldColors,
-                        shape = MaterialTheme.shapes.small,
-                    )
-
-                    Text(text = "Número de pagas")
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = uiState.numberOfPayments,
-                        onValueChange = viewModel::onNumberOfPaymentsChanged,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        isError = uiState.numberOfPayments.isNotBlank() && !uiState.isPaymentCountValid,
-                        colors = fieldColors,
-                        shape = MaterialTheme.shapes.small,
-                    )
-
-                    Text(text = "Edad")
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = uiState.age,
-                        onValueChange = viewModel::onAgeChanged,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        isError = uiState.age.isNotBlank() && !uiState.isAgeValid,
-                        colors = fieldColors,
-                        shape = MaterialTheme.shapes.small,
-                    )
-
-                    Text(text = "Número de hijos")
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = uiState.numberOfChildren,
-                        onValueChange = viewModel::onNumberOfChildrenChanged,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        isError = uiState.numberOfChildren.isNotBlank() && !uiState.isChildCountValid,
-                        colors = fieldColors,
-                        shape = MaterialTheme.shapes.small
-                    )
-
-                    Text(text = "Grupo profesional")
-                    SingleChoiceDropdown(
-                        options = SalaryUiState.professionalGroups,
-                        selectedOption = uiState.selectedProfessionalGroup,
-                        colors = fieldColors,
-                        onOptionSelected = viewModel::onProfessionalGroupChanged
-                    )
-
-                    Text(text = "Grado de discapacidad (%)")
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = uiState.disabilityPercentage,
-                        onValueChange = viewModel::onDisabilityPercentageChanged,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        isError = uiState.disabilityPercentage.isNotBlank() && !uiState.isDisabilityValid,
-                        colors = fieldColors,
-                        shape = MaterialTheme.shapes.small
-                    )
-
-                    Text(text = "Estado civil")
-                    SingleChoiceDropdown(
-                        options = SalaryUiState.maritalStatuses,
-                        selectedOption = uiState.selectedMaritalStatus,
-                        colors = fieldColors,
-                        onOptionSelected = viewModel::onMaritalStatusChanged
-                    )
-
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 4.dp)
-                            .heightIn(min = 48.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFF3BD72),
-                            contentColor = Color(0xFF073B35),
-                            disabledContainerColor = Color(0xFF084C44),
-                            disabledContentColor = Color(0xFFB8D4CB)
-                        ),
-                        onClick = viewModel::onCalculate,
-                        enabled = uiState.canCalculate
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Text(
-                                text = "Calcular salario neto",
-                                modifier = Modifier.weight(1f)
-                            )
-
-                            Icon(
-                                painter = painterResource(R.drawable.ic_arrow_forward),
-                                contentDescription = null,
-                                modifier = Modifier.size(28.dp)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SingleChoiceDropdown(
-    colors: TextFieldColors,
-    options: List<String>,
-    selectedOption: String,
-    onOptionSelected: (String) -> Unit
-) {
-    val expanded = remember { mutableStateOf(false) }
-
-    ExposedDropdownMenuBox(
-        expanded = expanded.value,
-        onExpandedChange = { expanded.value = it }
-    ) {
-        OutlinedTextField(
-            value = selectedOption,
-            placeholder = { Text("Elige una opción") },
-            colors = colors,
-            shape = MaterialTheme.shapes.small,
-            onValueChange = {},
-            readOnly = true,
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value)
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-        )
-
-        ExposedDropdownMenu(
-            expanded = expanded.value,
-            onDismissRequest = { expanded.value = false }
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(text = option) },
-                    onClick = {
-                        onOptionSelected(option)
-                        expanded.value = false
-                    }
-                )
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun SalaryCalculatorScreenPreview() {
-    CalculadoraSalarioNetoTheme(darkTheme = false, dynamicColor = false) {
-        SalaryCalculatorScreen(viewModel = remember { SalaryViewModel() })
-    }
+    )
 }
